@@ -1,6 +1,5 @@
 import Vapor
 
-struct HealthResponseDTO: Content {
+struct HealthResponseDTO: Content, Sendable {
     let status: String
 }
-

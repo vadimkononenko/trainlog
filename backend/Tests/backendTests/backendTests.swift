@@ -40,4 +40,17 @@ struct BackendFoundationTests {
             }
         }
     }
+
+    @Test("Protected current user route requires bearer token")
+    func currentUserRequiresBearerToken() async throws {
+        try await withApp { app in
+            try await app.testing().test(.GET, "me") { res async throws in
+                #expect(res.status == .unauthorized)
+
+                let body = try res.content.decode(APIErrorResponseDTO.self)
+                #expect(body.code == "unauthorized")
+                #expect(body.details.isEmpty)
+            }
+        }
+    }
 }

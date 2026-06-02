@@ -1,12 +1,13 @@
 import NIOSSL
 import Fluent
 import FluentPostgresDriver
+import JWT
 import Vapor
 
-// configures your application
+/// Configures application middleware, database access, and routes.
+///
+/// - Parameter app: The Vapor application instance to configure.
 public func configure(_ app: Application) async throws {
-    // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
     var middlewares = Middlewares()
     middlewares.use(RouteLoggingMiddleware(logLevel: .info))
@@ -22,6 +23,26 @@ public func configure(_ app: Application) async throws {
         tls: .prefer(try .init(configuration: .clientDefault)))
     ), as: .psql)
 
-    // register routes
+    await app.jwt.keys.add(hmac: HMACKey(from: try jwtSecret(for: app)), digestAlgorithm: .sha256)
+
+    app.migrations.add(CreateUser())
+    app.migrations.add(CreateRefreshToken())
+
     try routes(app)
+}
+
+/// Returns the JWT secret for the current environment.
+///
+/// - Parameter app: The Vapor application instance.
+/// - Returns: The JWT secret used for access token signing.
+private func jwtSecret(for app: Application) throws -> String {
+    if let secret = Environment.get("JWT_SECRET"), !secret.isEmpty {
+        return secret
+    }
+
+    guard !app.environment.isRelease else {
+        throw Abort(.internalServerError, reason: "JWT_SECRET is required in release.")
+    }
+
+    return "trainlog-development-jwt-secret"
 }
