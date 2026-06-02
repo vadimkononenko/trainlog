@@ -1,0 +1,62 @@
+# macOS
+.DS_Store
+._*
+
+# Xcode
+DerivedData/
+*.xcuserdata/
+*.xcuserstate
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# Xcode build products and archives
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.xcarchive
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.pins
+
+# Swift coverage/profiling
+default.profraw
+*.profraw
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Secrets and local config
+*.p8
+*.cer
+*.mobileprovision
+*.provisionprofile
+*.key
+*.pem
+*.crt
+
+# Logs
+*.log
+
+# Local databases
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+db.sqlite
+
+# Docker/local runtime
+docker-compose.override.yml
+
+# Dependency managers, if added later
+Pods/
+Carthage/Build/
+
+# Editors
+.vscode/settings.json
+.idea/
