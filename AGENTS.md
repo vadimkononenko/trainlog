@@ -12,6 +12,15 @@ TrainLog is a monorepo with two Swift applications:
 - `docs` contains architecture, API, sync, and decision notes.
 - `scripts` contains project automation.
 
+## Context Handoff
+
+Before continuing implementation in a new chat, read:
+
+- `docs/progress.md` for completed work, current state, verification, and next steps.
+- `docs/mvp-plan.md` for the MVP roadmap.
+- `docs/architecture.md` for architecture details.
+- `docs/api.md` and `contracts/openapi.yml` before changing backend API shape.
+
 ## Architecture Rules
 
 - iOS uses SwiftUI, Swift Concurrency, `@Observation`, MVVM+C, SwiftData, Swift Testing, and manual DI.
@@ -77,4 +86,4 @@ Do not document trivial helpers just to add noise.
 - Keep API request and response DTOs separate from domain and local persistence models.
 - Keep backend models separate from API DTOs.
 - Update `docs/architecture.md`, `docs/api.md`, or `docs/sync-strategy.md` when changing architecture, API shape, or sync behavior.
-
+- Update `docs/progress.md` after completing a planned MVP step.
