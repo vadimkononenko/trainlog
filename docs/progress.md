@@ -15,9 +15,9 @@ Implemented so far:
 - Backend foundation.
 - Backend auth.
 - Backend exercises.
-- iOS project skeleton and app navigation.
+- iOS project reset to an empty SwiftUI baseline intentionally.
 
-The iOS project exists at `apps/ios/TrainLog` and now has an MVVM+C navigation skeleton.
+The iOS project exists at `apps/ios/TrainLog`, but the previous iOS architecture implementation was removed on purpose. The user wants to implement the iOS client by hand from a blank baseline.
 
 ## Local Runtime
 
@@ -142,32 +142,17 @@ Verification:
 - OpenAPI YAML parses.
 - Exercise routes still need manual end-to-end verification in local Swagger UI if not already completed.
 
-## Completed: iOS Project Skeleton and App Navigation
+## iOS Baseline
 
-Implemented:
+Current iOS state:
 
-- Replaced the starter `ContentView` with a SwiftUI app root.
-- Added `DIContainer` with constructor-created shared dependencies.
-- Added `AppCoordinator` with auth and authenticated root flows.
-- Added `AuthCoordinator` and placeholder auth screen.
-- Added authenticated tab navigation for exercises, templates, active workout, history, and settings.
-- Added feature coordinators and placeholder view models for the MVP feature areas.
-- Added SwiftData container setup and initial `LocalExercise` persistence model.
-- Added `TokenStore` actor and placeholder `SyncEngine` actor.
-- Set the iOS deployment target to 18.0.
-
-Behavior:
-
-- Launch starts in the auth flow.
-- The placeholder Continue button marks the session authenticated and switches to the main tab shell.
-- Settings includes a placeholder sign-out action that returns to the auth flow.
-- Feature view models do not perform navigation directly.
-- Coordinators own `NavigationPath`.
+- The iOS app is intentionally empty.
+- The app contains only a minimal SwiftUI `TrainLogApp`, `ContentView`, and assets.
+- No iOS coordinators, DI container, repositories, networking layer, SwiftData models, token storage, auth flow, or feature modules are currently implemented.
 
 Verification:
 
-- `xcodebuild -project apps/ios/TrainLog/TrainLog.xcodeproj -scheme TrainLog -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/TrainLogDerivedData build CODE_SIGNING_ALLOWED=NO` passes.
-- The first sandboxed build attempt failed with `sandbox-exec: sandbox_apply: Operation not permitted`; the same command passed when rerun outside the sandbox.
+- `xcodebuild -project apps/ios/TrainLog/TrainLog.xcodeproj -scheme TrainLog -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/TrainLogDerivedData build CODE_SIGNING_ALLOWED=NO` should pass after reset.
 
 ## Current Tests
 
@@ -180,44 +165,26 @@ Current backend tests cover:
 
 Database-backed integration tests for register/login/exercise CRUD are not yet automated because they require local PostgreSQL.
 
+Current iOS tests:
+
+- No iOS test target exists yet.
+
 ## Next Recommended Step
 
-Follow the original MVP order and start the iOS side:
+The user will implement the iOS client manually from scratch.
+
+Suggested starting point:
 
 ```text
-iOS auth flow, token storage, and session state
+Build the iOS app foundation by hand from the empty SwiftUI baseline.
 ```
 
-Build on the existing iOS project in:
-
-```text
-apps/ios/TrainLog
-```
-
-Use:
-
-- iOS 18+
-- SwiftUI lifecycle
-- `@Observation`
-- MVVM+C
-- `DIContainer`
-- constructor injection
-- token storage actor
-- real auth API integration
-- Swift Testing
-
-Alternative if staying backend-first:
-
-```text
-Backend Workout Templates
-```
-
-Use the same backend layering and documentation style as Auth and Exercises.
+Keep backend implementation intact. Do not change `docs/api.md` or `contracts/openapi.yml` unless the backend API shape changes.
 
 ## New Chat Prompt
 
 Use this prompt to continue in another chat:
 
 ```text
-Read AGENTS.md, docs/progress.md, docs/mvp-plan.md, docs/architecture.md, docs/api.md, and contracts/openapi.yml. Continue from the next MVP step. Inspect the repo before editing, follow the established architecture, update docs when APIs or architecture change, and run tests after implementation.
+Read AGENTS.md, docs/progress.md, docs/mvp-plan.md, docs/architecture.md, docs/api.md, and contracts/openapi.yml. The backend foundation/auth/exercises are implemented. The iOS app has intentionally been reset to an empty SwiftUI baseline so the user can implement it by hand. Inspect the repo before editing, keep backend intact unless explicitly asked, and update docs/progress.md after completed work.
 ```
