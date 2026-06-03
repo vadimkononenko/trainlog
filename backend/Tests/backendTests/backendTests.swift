@@ -53,4 +53,17 @@ struct BackendFoundationTests {
             }
         }
     }
+
+    @Test("Exercise list route requires bearer token")
+    func exerciseListRequiresBearerToken() async throws {
+        try await withApp { app in
+            try await app.testing().test(.GET, "exercises") { res async throws in
+                #expect(res.status == .unauthorized)
+
+                let body = try res.content.decode(APIErrorResponseDTO.self)
+                #expect(body.code == "unauthorized")
+                #expect(body.details.isEmpty)
+            }
+        }
+    }
 }

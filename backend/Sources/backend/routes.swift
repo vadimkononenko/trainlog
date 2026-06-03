@@ -15,4 +15,12 @@ func routes(_ app: Application) throws {
         authenticator: AccessTokenAuthenticator(repository: authRepository)
     )
     try app.register(collection: authController)
+
+    let exerciseRepository = DefaultExerciseRepository()
+    let exerciseService = ExerciseService(repository: exerciseRepository)
+    let exerciseController = ExerciseController(
+        service: exerciseService,
+        authenticator: AccessTokenAuthenticator(repository: authRepository)
+    )
+    try app.register(collection: exerciseController)
 }

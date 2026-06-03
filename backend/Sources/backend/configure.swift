@@ -11,6 +11,7 @@ public func configure(_ app: Application) async throws {
 
     var middlewares = Middlewares()
     middlewares.use(RouteLoggingMiddleware(logLevel: .info))
+    middlewares.use(CORSMiddleware(configuration: .default()))
     middlewares.use(APIErrorMiddleware())
     app.middleware = middlewares
 
@@ -27,6 +28,7 @@ public func configure(_ app: Application) async throws {
 
     app.migrations.add(CreateUser())
     app.migrations.add(CreateRefreshToken())
+    app.migrations.add(CreateExercise())
 
     try routes(app)
 }
