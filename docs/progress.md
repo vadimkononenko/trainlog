@@ -15,8 +15,9 @@ Implemented so far:
 - Backend foundation.
 - Backend auth.
 - Backend exercises.
+- iOS project skeleton and app navigation.
 
-The iOS project has not been created yet.
+The iOS project exists at `apps/ios/TrainLog` and now has an MVVM+C navigation skeleton.
 
 ## Local Runtime
 
@@ -141,6 +142,33 @@ Verification:
 - OpenAPI YAML parses.
 - Exercise routes still need manual end-to-end verification in local Swagger UI if not already completed.
 
+## Completed: iOS Project Skeleton and App Navigation
+
+Implemented:
+
+- Replaced the starter `ContentView` with a SwiftUI app root.
+- Added `DIContainer` with constructor-created shared dependencies.
+- Added `AppCoordinator` with auth and authenticated root flows.
+- Added `AuthCoordinator` and placeholder auth screen.
+- Added authenticated tab navigation for exercises, templates, active workout, history, and settings.
+- Added feature coordinators and placeholder view models for the MVP feature areas.
+- Added SwiftData container setup and initial `LocalExercise` persistence model.
+- Added `TokenStore` actor and placeholder `SyncEngine` actor.
+- Set the iOS deployment target to 18.0.
+
+Behavior:
+
+- Launch starts in the auth flow.
+- The placeholder Continue button marks the session authenticated and switches to the main tab shell.
+- Settings includes a placeholder sign-out action that returns to the auth flow.
+- Feature view models do not perform navigation directly.
+- Coordinators own `NavigationPath`.
+
+Verification:
+
+- `xcodebuild -project apps/ios/TrainLog/TrainLog.xcodeproj -scheme TrainLog -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/TrainLogDerivedData build CODE_SIGNING_ALLOWED=NO` passes.
+- The first sandboxed build attempt failed with `sandbox-exec: sandbox_apply: Operation not permitted`; the same command passed when rerun outside the sandbox.
+
 ## Current Tests
 
 Current backend tests cover:
@@ -157,10 +185,10 @@ Database-backed integration tests for register/login/exercise CRUD are not yet a
 Follow the original MVP order and start the iOS side:
 
 ```text
-iOS project skeleton + app navigation
+iOS auth flow, token storage, and session state
 ```
 
-Create the iOS project in:
+Build on the existing iOS project in:
 
 ```text
 apps/ios/TrainLog
@@ -171,10 +199,11 @@ Use:
 - iOS 18+
 - SwiftUI lifecycle
 - `@Observation`
-- SwiftData
 - MVVM+C
 - `DIContainer`
 - constructor injection
+- token storage actor
+- real auth API integration
 - Swift Testing
 
 Alternative if staying backend-first:
@@ -192,4 +221,3 @@ Use this prompt to continue in another chat:
 ```text
 Read AGENTS.md, docs/progress.md, docs/mvp-plan.md, docs/architecture.md, docs/api.md, and contracts/openapi.yml. Continue from the next MVP step. Inspect the repo before editing, follow the established architecture, update docs when APIs or architecture change, and run tests after implementation.
 ```
-
