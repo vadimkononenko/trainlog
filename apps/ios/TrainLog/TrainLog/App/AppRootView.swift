@@ -7,11 +7,16 @@ struct AppRootView: View {
     var body: some View {
         Group {
             switch coordinator.rootFlow {
+            case .restoring:
+                ProgressView()
             case .auth:
                 AuthCoordinatorView(coordinator: coordinator.authCoordinator)
             case .main:
                 MainCoordinatorView(coordinator: coordinator.mainCoordinator)
             }
+        }
+        .task {
+            await coordinator.restoreSessionIfNeeded()
         }
     }
 }

@@ -7,10 +7,13 @@ struct SettingsView: View {
         List {
             Section("Account") {
                 Button(role: .destructive) {
-                    viewModel.signOut()
+                    Task {
+                        await viewModel.signOut()
+                    }
                 } label: {
                     Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
                 }
+                .disabled(viewModel.isSigningOut)
             }
         }
         .navigationTitle("Settings")
@@ -18,7 +21,14 @@ struct SettingsView: View {
 }
 
 #Preview {
+    let container = DIContainer.preview()
+
     NavigationStack {
-        SettingsView(viewModel: SettingsViewModel(authSession: AuthSession()))
+        SettingsView(
+            viewModel: SettingsViewModel(
+                authSession: container.authSession,
+                authRepository: container.authRepository
+            )
+        )
     }
 }

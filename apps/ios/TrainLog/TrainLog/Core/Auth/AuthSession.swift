@@ -4,24 +4,28 @@ import Observation
 @MainActor
 @Observable
 final class AuthSession {
-    private(set) var state: AuthSessionState = .signedOut
+    private(set) var state: AuthSessionState = .restoring
 
     var isAuthenticated: Bool {
         switch state {
         case .signedIn:
             true
-        case .signedOut:
+        case .restoring, .signedOut:
             false
         }
     }
 
-    func completePlaceholderSignIn() {
-        state = .signedIn(
-            user: CurrentUser(
-                id: UUID(),
-                email: "demo@trainlog.local"
-            )
-        )
+    func restore(with storedSession: AuthStoredSession?) {
+        guard let storedSession else {
+            state = .signedOut
+            return
+        }
+
+        state = .signedIn(user: storedSession.user)
+    }
+
+    func signIn(with session: AuthStoredSession) {
+        state = .signedIn(user: session.user)
     }
 
     func signOut() {
@@ -30,6 +34,7 @@ final class AuthSession {
 }
 
 enum AuthSessionState: Equatable, Sendable {
+    case restoring
     case signedOut
     case signedIn(user: CurrentUser)
 }

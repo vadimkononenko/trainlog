@@ -6,8 +6,14 @@ final class SettingsCoordinator {
     var path = NavigationPath()
     let viewModel: SettingsViewModel
 
-    init(authSession: AuthSession) {
-        self.viewModel = SettingsViewModel(authSession: authSession)
+    init(
+        authSession: AuthSession,
+        authRepository: AuthRepository
+    ) {
+        self.viewModel = SettingsViewModel(
+            authSession: authSession,
+            authRepository: authRepository
+        )
     }
 }
 

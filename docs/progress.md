@@ -16,8 +16,9 @@ Implemented so far:
 - Backend auth.
 - Backend exercises.
 - iOS project skeleton and app navigation.
+- iOS auth flow, token storage, and session state.
 
-The iOS project exists at `apps/ios/TrainLog` and now has an MVVM+C navigation skeleton.
+The iOS project exists at `apps/ios/TrainLog` and now has an MVVM+C navigation skeleton with real auth API integration.
 
 ## Local Runtime
 
@@ -169,6 +170,35 @@ Verification:
 - `xcodebuild -project apps/ios/TrainLog/TrainLog.xcodeproj -scheme TrainLog -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/TrainLogDerivedData build CODE_SIGNING_ALLOWED=NO` passes.
 - The first sandboxed build attempt failed with `sandbox-exec: sandbox_apply: Operation not permitted`; the same command passed when rerun outside the sandbox.
 
+## Completed: iOS Auth Flow, Token Storage, and Session State
+
+Implemented:
+
+- Added a minimal `APIClient`, `Endpoint`, `HTTPMethod`, `NetworkSessionProtocol`, and typed `APIError`.
+- Added auth request/response DTOs matching the backend auth contract.
+- Added `RemoteAuthDataSource`, `AuthRepository`, and `DefaultAuthRepository`.
+- Replaced the placeholder auth screen with separate sign-in and sign-up flows.
+- Added form view models for sign in and sign up with loading/error state.
+- Wired `POST /auth/login`, `POST /auth/register`, and `POST /auth/logout` through the auth repository.
+- Updated `TokenStore` actor to persist auth session data in Keychain for the live app.
+- Kept preview token storage in memory so previews do not read or write real Keychain data.
+- Updated `AuthSession` to support restoring, signed-out, and signed-in states.
+- Updated `AppCoordinator` and `AppRootView` to restore stored session state on app launch.
+- Updated Settings sign out to revoke the refresh token best-effort, clear local token state, and return to the auth flow.
+
+Behavior:
+
+- App launch starts in a restoring state, then moves to the auth flow or main app flow.
+- Successful sign in/sign up saves access token, refresh token, and current user locally.
+- Stored auth state can restore the main app shell without the placeholder demo user.
+- Sign out clears local auth state even if the remote logout request fails.
+
+Verification:
+
+- `xcodebuild -project apps/ios/TrainLog/TrainLog.xcodeproj -scheme TrainLog -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/TrainLogDerivedData build CODE_SIGNING_ALLOWED=NO` passes.
+- Auth endpoints were not manually tested from the app in this step because the local backend runtime was not started.
+- No iOS test target exists yet; APIClient tests should be added when the iOS test target is introduced.
+
 ## Current Tests
 
 Current backend tests cover:
@@ -180,12 +210,16 @@ Current backend tests cover:
 
 Database-backed integration tests for register/login/exercise CRUD are not yet automated because they require local PostgreSQL.
 
+Current iOS tests:
+
+- No iOS test target exists yet.
+
 ## Next Recommended Step
 
 Follow the original MVP order and start the iOS side:
 
 ```text
-iOS auth flow, token storage, and session state
+iOS networking layer and exercise list
 ```
 
 Build on the existing iOS project in:
@@ -202,8 +236,10 @@ Use:
 - MVVM+C
 - `DIContainer`
 - constructor injection
-- token storage actor
-- real auth API integration
+- authenticated API requests
+- exercise repository
+- exercise list UI
+- error and loading states
 - Swift Testing
 
 Alternative if staying backend-first:

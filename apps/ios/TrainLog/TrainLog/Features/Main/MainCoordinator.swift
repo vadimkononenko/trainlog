@@ -11,8 +11,14 @@ final class MainCoordinator {
     let historyCoordinator = HistoryCoordinator()
     let settingsCoordinator: SettingsCoordinator
 
-    init(authSession: AuthSession) {
-        self.settingsCoordinator = SettingsCoordinator(authSession: authSession)
+    init(
+        authSession: AuthSession,
+        authRepository: AuthRepository
+    ) {
+        self.settingsCoordinator = SettingsCoordinator(
+            authSession: authSession,
+            authRepository: authRepository
+        )
     }
 }
 
