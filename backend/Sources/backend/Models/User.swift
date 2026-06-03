@@ -22,6 +22,9 @@ final class User: Model, Authenticatable, @unchecked Sendable {
     @Children(for: \.$user)
     var refreshTokens: [RefreshToken]
 
+    @Children(for: \.$owner)
+    var exercises: [Exercise]
+
     init() { }
 
     init(id: UUID? = nil, email: String, passwordHash: String) {

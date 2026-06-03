@@ -2,6 +2,9 @@ openapi: 3.1.0
 info:
   title: TrainLog API
   version: 0.1.0
+servers:
+  - url: http://localhost:8080
+    description: Local Vapor server
 paths:
   /health:
     get:
@@ -95,12 +98,131 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "401":
           $ref: "#/components/responses/APIError"
+  /exercises:
+    get:
+      summary: List exercises
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            $ref: "#/components/schemas/ExerciseCategory"
+        - name: equipment
+          in: query
+          schema:
+            $ref: "#/components/schemas/ExerciseEquipment"
+      responses:
+        "200":
+          description: Paginated exercises
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedExercisesResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+    post:
+      summary: Create a custom exercise
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExerciseRequest"
+      responses:
+        "200":
+          description: Created exercise
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExerciseResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+  /exercises/{id}:
+    get:
+      summary: Get exercise details
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ExerciseID"
+      responses:
+        "200":
+          description: Exercise details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExerciseResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
+    patch:
+      summary: Update a custom exercise
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ExerciseID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateExerciseRequest"
+      responses:
+        "200":
+          description: Updated exercise
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExerciseResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
+    delete:
+      summary: Delete a custom exercise
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ExerciseID"
+      responses:
+        "204":
+          description: Exercise deleted
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  parameters:
+    ExerciseID:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   responses:
     APIError:
       description: API error
@@ -194,3 +316,152 @@ components:
           type: object
           additionalProperties:
             type: string
+    ExerciseCategory:
+      type: string
+      enum:
+        - chest
+        - back
+        - legs
+        - shoulders
+        - arms
+        - core
+        - cardio
+        - other
+    ExerciseType:
+      type: string
+      enum:
+        - strength
+        - cardio
+        - mobility
+        - bodyweight
+    ExerciseEquipment:
+      type: string
+      enum:
+        - barbell
+        - dumbbell
+        - machine
+        - band
+        - bodyweight
+        - cable
+        - kettlebell
+        - other
+    CreateExerciseRequest:
+      type: object
+      required:
+        - name
+        - category
+        - exerciseType
+        - equipment
+        - primaryMuscles
+        - instructions
+      properties:
+        name:
+          type: string
+        category:
+          $ref: "#/components/schemas/ExerciseCategory"
+        exerciseType:
+          $ref: "#/components/schemas/ExerciseType"
+        equipment:
+          $ref: "#/components/schemas/ExerciseEquipment"
+        primaryMuscles:
+          type: array
+          items:
+            type: string
+        instructions:
+          type: string
+    UpdateExerciseRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          $ref: "#/components/schemas/ExerciseCategory"
+        exerciseType:
+          $ref: "#/components/schemas/ExerciseType"
+        equipment:
+          $ref: "#/components/schemas/ExerciseEquipment"
+        primaryMuscles:
+          type: array
+          items:
+            type: string
+        instructions:
+          type: string
+    ExerciseResponse:
+      type: object
+      required:
+        - id
+        - name
+        - category
+        - exerciseType
+        - equipment
+        - primaryMuscles
+        - instructions
+        - version
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerUserId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        name:
+          type: string
+        category:
+          $ref: "#/components/schemas/ExerciseCategory"
+        exerciseType:
+          $ref: "#/components/schemas/ExerciseType"
+        equipment:
+          $ref: "#/components/schemas/ExerciseEquipment"
+        primaryMuscles:
+          type: array
+          items:
+            type: string
+        instructions:
+          type: string
+        createdAt:
+          type:
+            - string
+            - "null"
+          format: date-time
+        updatedAt:
+          type:
+            - string
+            - "null"
+          format: date-time
+        deletedAt:
+          type:
+            - string
+            - "null"
+          format: date-time
+        version:
+          type: integer
+    PaginationMetadata:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - hasNextPage
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        hasNextPage:
+          type: boolean
+    PaginatedExercisesResponse:
+      type: object
+      required:
+        - items
+        - metadata
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExerciseResponse"
+        metadata:
+          $ref: "#/components/schemas/PaginationMetadata"
