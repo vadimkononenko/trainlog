@@ -66,4 +66,56 @@ struct BackendFoundationTests {
             }
         }
     }
+
+    @Test("Workout template list route requires bearer token")
+    func workoutTemplateListRequiresBearerToken() async throws {
+        try await withApp { app in
+            try await app.testing().test(.GET, "workout-templates") { res async throws in
+                #expect(res.status == .unauthorized)
+
+                let body = try res.content.decode(APIErrorResponseDTO.self)
+                #expect(body.code == "unauthorized")
+                #expect(body.details.isEmpty)
+            }
+        }
+    }
+
+    @Test("Workout session list route requires bearer token")
+    func workoutSessionListRequiresBearerToken() async throws {
+        try await withApp { app in
+            try await app.testing().test(.GET, "workout-sessions") { res async throws in
+                #expect(res.status == .unauthorized)
+
+                let body = try res.content.decode(APIErrorResponseDTO.self)
+                #expect(body.code == "unauthorized")
+                #expect(body.details.isEmpty)
+            }
+        }
+    }
+
+    @Test("Sync pull route requires bearer token")
+    func syncPullRequiresBearerToken() async throws {
+        try await withApp { app in
+            try await app.testing().test(.GET, "sync/pull") { res async throws in
+                #expect(res.status == .unauthorized)
+
+                let body = try res.content.decode(APIErrorResponseDTO.self)
+                #expect(body.code == "unauthorized")
+                #expect(body.details.isEmpty)
+            }
+        }
+    }
+
+    @Test("Sync push route requires bearer token")
+    func syncPushRequiresBearerToken() async throws {
+        try await withApp { app in
+            try await app.testing().test(.POST, "sync/push") { res async throws in
+                #expect(res.status == .unauthorized)
+
+                let body = try res.content.decode(APIErrorResponseDTO.self)
+                #expect(body.code == "unauthorized")
+                #expect(body.details.isEmpty)
+            }
+        }
+    }
 }

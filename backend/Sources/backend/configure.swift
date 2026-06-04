@@ -29,6 +29,11 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateUser())
     app.migrations.add(CreateRefreshToken())
     app.migrations.add(CreateExercise())
+    app.migrations.add(CreateWorkoutTemplate())
+    app.migrations.add(CreateWorkoutTemplateExercise())
+    app.migrations.add(CreateWorkoutSession())
+    app.migrations.add(CreateWorkoutSessionExercise())
+    app.migrations.add(CreateWorkoutSet())
 
     try routes(app)
 }

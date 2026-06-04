@@ -104,17 +104,8 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            minimum: 1
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
         - name: query
           in: query
           schema:
@@ -209,6 +200,226 @@ paths:
           $ref: "#/components/responses/APIError"
         "404":
           $ref: "#/components/responses/APIError"
+  /workout-templates:
+    get:
+      summary: List workout templates
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: Paginated workout templates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedWorkoutTemplatesResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+    post:
+      summary: Create a workout template
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkoutTemplateRequest"
+      responses:
+        "200":
+          description: Created workout template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkoutTemplateResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+  /workout-templates/{id}:
+    get:
+      summary: Get workout template details
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkoutTemplateID"
+      responses:
+        "200":
+          description: Workout template details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkoutTemplateResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
+    patch:
+      summary: Update a workout template
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkoutTemplateID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorkoutTemplateRequest"
+      responses:
+        "200":
+          description: Updated workout template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkoutTemplateResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
+    delete:
+      summary: Delete a workout template
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkoutTemplateID"
+      responses:
+        "204":
+          description: Workout template deleted
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
+  /workout-sessions:
+    get:
+      summary: List workout sessions
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: Paginated workout sessions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedWorkoutSessionsResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+    post:
+      summary: Create a workout session
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkoutSessionRequest"
+      responses:
+        "200":
+          description: Created workout session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkoutSessionResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+  /workout-sessions/{id}:
+    get:
+      summary: Get workout session details
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkoutSessionID"
+      responses:
+        "200":
+          description: Workout session details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkoutSessionResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
+    patch:
+      summary: Update a workout session
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkoutSessionID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorkoutSessionRequest"
+      responses:
+        "200":
+          description: Updated workout session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkoutSessionResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
+    delete:
+      summary: Delete a workout session
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkoutSessionID"
+      responses:
+        "204":
+          description: Workout session deleted
+        "401":
+          $ref: "#/components/responses/APIError"
+        "404":
+          $ref: "#/components/responses/APIError"
+  /sync/pull:
+    get:
+      summary: Pull server changes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Sync pull response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncPullResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
+  /sync/push:
+    post:
+      summary: Push client mutations
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncPushRequest"
+      responses:
+        "200":
+          description: Accepted sync mutations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncPushResponse"
+        "401":
+          $ref: "#/components/responses/APIError"
 components:
   securitySchemes:
     bearerAuth:
@@ -216,7 +427,34 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
     ExerciseID:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    WorkoutTemplateID:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    WorkoutSessionID:
       name: id
       in: path
       required: true
@@ -421,22 +659,406 @@ components:
         instructions:
           type: string
         createdAt:
-          type:
-            - string
-            - "null"
-          format: date-time
+          $ref: "#/components/schemas/NullableDateTime"
         updatedAt:
-          type:
-            - string
-            - "null"
-          format: date-time
+          $ref: "#/components/schemas/NullableDateTime"
         deletedAt:
-          type:
-            - string
-            - "null"
-          format: date-time
+          $ref: "#/components/schemas/NullableDateTime"
         version:
           type: integer
+    WorkoutTemplateExerciseRequest:
+      type: object
+      required:
+        - exerciseId
+      properties:
+        exerciseId:
+          type: string
+          format: uuid
+        position:
+          type: integer
+          minimum: 1
+        targetSets:
+          type: integer
+          minimum: 1
+        targetReps:
+          type: integer
+          minimum: 1
+        targetWeight:
+          type: number
+          minimum: 0
+        restSeconds:
+          type: integer
+          minimum: 0
+        notes:
+          $ref: "#/components/schemas/NullableString"
+    CreateWorkoutTemplateRequest:
+      type: object
+      required:
+        - name
+        - exercises
+      properties:
+        name:
+          type: string
+        notes:
+          $ref: "#/components/schemas/NullableString"
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutTemplateExerciseRequest"
+    UpdateWorkoutTemplateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        notes:
+          $ref: "#/components/schemas/NullableString"
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutTemplateExerciseRequest"
+    WorkoutTemplateExerciseResponse:
+      type: object
+      required:
+        - id
+        - exerciseId
+        - position
+      properties:
+        id:
+          type: string
+          format: uuid
+        exerciseId:
+          type: string
+          format: uuid
+        position:
+          type: integer
+        targetSets:
+          type:
+            - integer
+            - "null"
+        targetReps:
+          type:
+            - integer
+            - "null"
+        targetWeight:
+          type:
+            - number
+            - "null"
+        restSeconds:
+          type:
+            - integer
+            - "null"
+        notes:
+          $ref: "#/components/schemas/NullableString"
+    WorkoutTemplateResponse:
+      type: object
+      required:
+        - id
+        - ownerUserId
+        - name
+        - exercises
+        - version
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerUserId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        notes:
+          $ref: "#/components/schemas/NullableString"
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutTemplateExerciseResponse"
+        createdAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        updatedAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        deletedAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        version:
+          type: integer
+    WorkoutSetRequest:
+      type: object
+      properties:
+        position:
+          type: integer
+          minimum: 1
+        reps:
+          type: integer
+          minimum: 1
+        weight:
+          type: number
+          minimum: 0
+        durationSeconds:
+          type: integer
+          minimum: 0
+        distanceMeters:
+          type: number
+          minimum: 0
+        isCompleted:
+          type: boolean
+        notes:
+          $ref: "#/components/schemas/NullableString"
+    WorkoutSessionExerciseRequest:
+      type: object
+      required:
+        - exerciseId
+        - sets
+      properties:
+        exerciseId:
+          type: string
+          format: uuid
+        position:
+          type: integer
+          minimum: 1
+        notes:
+          $ref: "#/components/schemas/NullableString"
+        sets:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutSetRequest"
+    CreateWorkoutSessionRequest:
+      type: object
+      required:
+        - startedAt
+        - exercises
+      properties:
+        templateId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        startedAt:
+          type: string
+          format: date-time
+        endedAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        notes:
+          $ref: "#/components/schemas/NullableString"
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutSessionExerciseRequest"
+    UpdateWorkoutSessionRequest:
+      type: object
+      properties:
+        templateId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        startedAt:
+          type: string
+          format: date-time
+        endedAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        notes:
+          $ref: "#/components/schemas/NullableString"
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutSessionExerciseRequest"
+    WorkoutSetResponse:
+      type: object
+      required:
+        - id
+        - position
+        - isCompleted
+      properties:
+        id:
+          type: string
+          format: uuid
+        position:
+          type: integer
+        reps:
+          type:
+            - integer
+            - "null"
+        weight:
+          type:
+            - number
+            - "null"
+        durationSeconds:
+          type:
+            - integer
+            - "null"
+        distanceMeters:
+          type:
+            - number
+            - "null"
+        isCompleted:
+          type: boolean
+        notes:
+          $ref: "#/components/schemas/NullableString"
+    WorkoutSessionExerciseResponse:
+      type: object
+      required:
+        - id
+        - exerciseId
+        - position
+        - sets
+      properties:
+        id:
+          type: string
+          format: uuid
+        exerciseId:
+          type: string
+          format: uuid
+        position:
+          type: integer
+        notes:
+          $ref: "#/components/schemas/NullableString"
+        sets:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutSetResponse"
+    WorkoutSessionResponse:
+      type: object
+      required:
+        - id
+        - ownerUserId
+        - startedAt
+        - exercises
+        - version
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerUserId:
+          type: string
+          format: uuid
+        templateId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        startedAt:
+          type: string
+          format: date-time
+        endedAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        notes:
+          $ref: "#/components/schemas/NullableString"
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutSessionExerciseResponse"
+        createdAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        updatedAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        deletedAt:
+          $ref: "#/components/schemas/NullableDateTime"
+        version:
+          type: integer
+    SyncMutationAction:
+      type: string
+      enum:
+        - create
+        - update
+        - delete
+    SyncWorkoutTemplateMutation:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          $ref: "#/components/schemas/SyncMutationAction"
+        id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        template:
+          anyOf:
+            - $ref: "#/components/schemas/CreateWorkoutTemplateRequest"
+            - type: "null"
+    SyncWorkoutSessionMutation:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          $ref: "#/components/schemas/SyncMutationAction"
+        id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        session:
+          anyOf:
+            - $ref: "#/components/schemas/CreateWorkoutSessionRequest"
+            - type: "null"
+    SyncPullResponse:
+      type: object
+      required:
+        - serverTime
+        - exercises
+        - workoutTemplates
+        - workoutSessions
+      properties:
+        serverTime:
+          type: string
+          format: date-time
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExerciseResponse"
+        workoutTemplates:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutTemplateResponse"
+        workoutSessions:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutSessionResponse"
+    SyncPushRequest:
+      type: object
+      required:
+        - workoutTemplates
+        - workoutSessions
+      properties:
+        workoutTemplates:
+          type: array
+          items:
+            $ref: "#/components/schemas/SyncWorkoutTemplateMutation"
+        workoutSessions:
+          type: array
+          items:
+            $ref: "#/components/schemas/SyncWorkoutSessionMutation"
+    SyncPushResponse:
+      type: object
+      required:
+        - serverTime
+        - workoutTemplates
+        - workoutSessions
+        - deletedWorkoutTemplateIds
+        - deletedWorkoutSessionIds
+      properties:
+        serverTime:
+          type: string
+          format: date-time
+        workoutTemplates:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutTemplateResponse"
+        workoutSessions:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutSessionResponse"
+        deletedWorkoutTemplateIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        deletedWorkoutSessionIds:
+          type: array
+          items:
+            type: string
+            format: uuid
     PaginationMetadata:
       type: object
       required:
@@ -465,3 +1087,36 @@ components:
             $ref: "#/components/schemas/ExerciseResponse"
         metadata:
           $ref: "#/components/schemas/PaginationMetadata"
+    PaginatedWorkoutTemplatesResponse:
+      type: object
+      required:
+        - items
+        - metadata
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutTemplateResponse"
+        metadata:
+          $ref: "#/components/schemas/PaginationMetadata"
+    PaginatedWorkoutSessionsResponse:
+      type: object
+      required:
+        - items
+        - metadata
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkoutSessionResponse"
+        metadata:
+          $ref: "#/components/schemas/PaginationMetadata"
+    NullableString:
+      type:
+        - string
+        - "null"
+    NullableDateTime:
+      type:
+        - string
+        - "null"
+      format: date-time
