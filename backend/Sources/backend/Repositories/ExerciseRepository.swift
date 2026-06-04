@@ -18,6 +18,7 @@ protocol ExerciseRepository: Sendable {
     ) async throws -> ExercisePageResult
     func findVisible(id: UUID, for userID: UUID, on database: any Database) async throws -> Exercise?
     func findUserOwned(id: UUID, for userID: UUID, on database: any Database) async throws -> Exercise?
+    func listChangedVisible(for userID: UUID, since: Date?, on database: any Database) async throws -> [Exercise]
     func create(_ exercise: Exercise, on database: any Database) async throws -> Exercise
     func update(_ exercise: Exercise, on database: any Database) async throws -> Exercise
     func delete(_ exercise: Exercise, on database: any Database) async throws
@@ -91,6 +92,32 @@ struct DefaultExerciseRepository: ExerciseRepository {
             .filter(\.$id == id)
             .filter(\.$owner.$id == userID)
             .first()
+    }
+
+    /// Lists visible exercises changed since a timestamp for sync.
+    ///
+    /// - Parameters:
+    ///   - userID: The authenticated user identifier.
+    ///   - since: The lower bound timestamp. `nil` returns all visible exercises.
+    ///   - database: The database used for lookup.
+    /// - Returns: Changed visible exercises including soft-deleted user-owned exercises.
+    func listChangedVisible(for userID: UUID, since: Date?, on database: any Database) async throws -> [Exercise] {
+        let query = Exercise.query(on: database)
+            .withDeleted()
+            .group(.or) {
+                $0.filter(\.$owner.$id == nil)
+                    .filter(\.$owner.$id == userID)
+            }
+            .sort(\.$updatedAt, .ascending)
+
+        if let since {
+            query.group(.or) {
+                $0.filter(\.$updatedAt >= since)
+                    .filter(\.$deletedAt >= since)
+            }
+        }
+
+        return try await query.all()
     }
 
     /// Creates an exercise record.
@@ -170,4 +197,3 @@ struct DefaultExerciseRepository: ExerciseRepository {
         return trimmedQuery?.isEmpty == false ? trimmedQuery : nil
     }
 }
-

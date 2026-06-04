@@ -25,6 +25,12 @@ final class User: Model, Authenticatable, @unchecked Sendable {
     @Children(for: \.$owner)
     var exercises: [Exercise]
 
+    @Children(for: \.$owner)
+    var workoutTemplates: [WorkoutTemplate]
+
+    @Children(for: \.$owner)
+    var workoutSessions: [WorkoutSession]
+
     init() { }
 
     init(id: UUID? = nil, email: String, passwordHash: String) {

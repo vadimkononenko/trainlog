@@ -23,4 +23,38 @@ func routes(_ app: Application) throws {
         authenticator: AccessTokenAuthenticator(repository: authRepository)
     )
     try app.register(collection: exerciseController)
+
+    let workoutTemplateRepository = DefaultWorkoutTemplateRepository()
+    let workoutTemplateService = WorkoutTemplateService(
+        repository: workoutTemplateRepository,
+        exerciseRepository: exerciseRepository
+    )
+    let workoutTemplateController = WorkoutTemplateController(
+        service: workoutTemplateService,
+        authenticator: AccessTokenAuthenticator(repository: authRepository)
+    )
+    try app.register(collection: workoutTemplateController)
+
+    let workoutSessionRepository = DefaultWorkoutSessionRepository()
+    let workoutSessionService = WorkoutSessionService(
+        repository: workoutSessionRepository,
+        templateRepository: workoutTemplateRepository,
+        exerciseRepository: exerciseRepository
+    )
+    let workoutSessionController = WorkoutSessionController(
+        service: workoutSessionService,
+        authenticator: AccessTokenAuthenticator(repository: authRepository)
+    )
+    try app.register(collection: workoutSessionController)
+
+    let syncService = SyncService(
+        exerciseRepository: exerciseRepository,
+        templateService: workoutTemplateService,
+        sessionService: workoutSessionService
+    )
+    let syncController = SyncController(
+        service: syncService,
+        authenticator: AccessTokenAuthenticator(repository: authRepository)
+    )
+    try app.register(collection: syncController)
 }
